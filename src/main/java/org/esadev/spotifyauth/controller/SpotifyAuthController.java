@@ -24,6 +24,7 @@ public class SpotifyAuthController {
     public String getAccessToken(@RequestParam("code") String code, HttpServletResponse response) {
         String accessToken = spotifyApiClient.getAccessToken(code);
         Cookie spotifyCookie = new Cookie("spotifyCode", accessToken);
+        spotifyCookie.setMaxAge(3600);
         response.addCookie(spotifyCookie);
         return accessToken;
     }
