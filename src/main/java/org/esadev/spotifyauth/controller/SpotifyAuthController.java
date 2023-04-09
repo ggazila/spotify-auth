@@ -7,6 +7,7 @@ import org.esadev.spotifyauth.SpotifyApiClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 
 import java.io.IOException;
 
@@ -21,11 +22,11 @@ public class SpotifyAuthController {
     }
 
     @GetMapping("/callback")
-    public String getAccessToken(@RequestParam("code") String code, HttpServletResponse response) {
-        String accessToken = spotifyApiClient.getAccessToken(code);
-        Cookie spotifyCookie = new Cookie("spotifyCode", accessToken);
-        spotifyCookie.setMaxAge(3600);
+    public AuthorizationCodeCredentials getAccessToken(@RequestParam("code") String code, HttpServletResponse response) {
+        var authorizationCodeCredentials = spotifyApiClient.getAccessToken(code);
+        Cookie spotifyCookie = new Cookie("spotifyCode", authorizationCodeCredentials.getAccessToken());
+        spotifyCookie.setMaxAge(authorizationCodeCredentials.getExpiresIn());
         response.addCookie(spotifyCookie);
-        return accessToken;
+        return authorizationCodeCredentials;
     }
 }

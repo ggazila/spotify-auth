@@ -6,6 +6,7 @@ import org.esadev.spotifyauth.props.SpotifyProps;
 import org.springframework.stereotype.Component;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
+import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 
 import java.io.IOException;
 import java.net.URI;
@@ -29,12 +30,11 @@ public class SpotifyApiClient {
         return authorizationCodeUriRequest.execute().toString();
     }
 
-    public String getAccessToken(String code) {
+    public AuthorizationCodeCredentials getAccessToken(String code) {
         var authorizationCodeRequest = spotifyApi.authorizationCode(code).build();
 
         try {
-            var authorizationCodeCredentials = authorizationCodeRequest.execute();
-            return authorizationCodeCredentials.getAccessToken();
+            return authorizationCodeRequest.execute();
         } catch (IOException | SpotifyWebApiException | ParseException e) {
             throw new SpotifyAuthException("Error exchanging authorization code for access token", e);
         }
